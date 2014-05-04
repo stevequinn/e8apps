@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<resource xmlns="http://schema.modapt.com/pub/modapt-resource/1.0" ttl="3600">
+	<metadata>
+		<version>1.0</version>
+	</metadata>
+
+	<rule name="e8apps.combinejs.init">
+		<prerequisite>
+			<script src="app.js" />
+		</prerequisite>
+	</rule>
+
+	<!--
+	The following rule combines all external script
+	references in a buffer into the once script.
+
+	Once the fetches and combination has occurred,
+	the front-side cache will store the results and serve
+	the content very quickly.
+
+	Example original buffer:
+
+	<html>
+		<head>
+	 		<script src="/js/jQuery.js" />
+	 		<script src="/js/Angular.js" />
+	 	</head>
+	 	<body>
+	 		<div>
+	 			<script src="/js/sillywidget.js" />
+	 		</div>
+	 		<script src="/js/track.js" />
+		</body>
+	</html>
+
+	Example result buffer:
+
+	<html>
+		<head>
+	 		<script src="/_e8/combinejs/?%2Fjs%2FjQuery.js,%2Fjs%2FAngular.js,%2Fjs%2Fsillywidget.js,%2Fjs%2Ftrack.js" />
+	 	</head>
+	 	<body>
+	 		<div>
+	 		</div>
+		</body>
+	</html>
+
+	-->
+	<rule name="e8apps.combinejs">
+		<apply name="e8apps.combinejs.init" />
+		<compose if="content_is_html">
+			<script>
+				e8apps.combinejs.combine_scripts();
+			</script>
+		</compose>
+	</rule>
+
+	<rule match-path="/_e8/combinejs/*" name="e8apps.combinejs.serve" comment="Serving combined javascript">
+		<apply name="e8apps.combinejs.init" />
+		<prerequisite>
+			<script>
+				var assets = e8apps.combinejs.asset_urls();
+			</script>
+		</prerequisite>
+		<compose>
+			<repeat list-expr="assets" defmac="asset_url">
+				<fetch inline="true" url="${asset_url}" />
+			</repeat>
+		</compose>
+	</rule>
+
+</resource>

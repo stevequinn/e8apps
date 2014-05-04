@@ -26,7 +26,7 @@ e8apps.combinejs = e8apps.combinejs || {};
 				scripts[i].setAttribute('src', e8_src);
 			}
 			else{
-				scripts[s].parentNode.removeChild(scripts[s]);
+				scripts[i].parentNode.removeChild(scripts[i]);
 			}
 		}
 	};

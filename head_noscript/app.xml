@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<resource xmlns="http://schema.modapt.com/pub/modapt-resource/1.0">
+	<metadata>
+		<version>1.0</version>
+	</metadata>
+
+	<rule name="e8apps.head_noscript.init">
+		<prerequisite>
+			<script src="app.js" />
+		</prerequisite>
+	</rule>
+
+	<!--
+	The following rule uses regex and javascript string
+	manipulation to extract <noscript> elements that are
+	in the <head> element, as this is technically illegal
+	HTML. This operation is performed on an unstructured
+	string, instead of a structured DOM.
+
+	The reason for keeping the manipulation in unstructured
+	form is due to a bug in libxml2 which strips out the
+	<body> attributes if a <noscript> element is found within
+	the <head>. This means that as soon as the buffer is
+	converted to a dom, the <body> attributes are lost.
+
+	Note: This must be called before any structured operation
+	has been performed on the buffer.
+	-->
+
+	<rule name="e8apps.head_noscript">
+		<apply name="e8apps.head_noscript.init" />
+		<compose if="content_is_html">
+			<script>
+				dombuf.value = e8apps.head_noscript.move_to_body(dombuf.value);
+			</script>
+		</compose>
+	</rule>
+
+</resource>

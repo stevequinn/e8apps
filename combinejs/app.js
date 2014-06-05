@@ -1,4 +1,7 @@
 
+// Note: This is untested as we do not currently support
+// the length parameter on an element list.
+
 // Check for the e8apps object and create it if it doesn't exist
 var e8apps = e8apps || {};
 e8apps.combinejs = e8apps.combinejs || {};

@@ -60,12 +60,19 @@
 		<prerequisite>
 			<script>
 				var assets = e8apps.combinejs.asset_urls();
+                var js = '';
 			</script>
 		</prerequisite>
 		<compose>
 			<repeat list-expr="assets" defmac="asset_url">
 				<fetch inline="true" url="${asset_url}" />
+                <script>
+                   	js += dombuf.value;
+                </script>
 			</repeat>
+            <script>
+                dombuf.value = js;
+            </script>
 		</compose>
 	</rule>
 

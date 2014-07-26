@@ -10,26 +10,27 @@ e8apps.combinejs = e8apps.combinejs || {};
 (function(o){
 
 	o.asset_urls = function(){
-		assets = request.query().split(',');
-		for(var a in assets){
-			assets[a] = decodeURIComponent(assets[a]);
+		var assets = request.query.split(',');
+		for(var i = 0; i < assets.length; i++){
+			assets[i] = decodeURIComponent(assets[i]);
 		}
 		return assets;
 	};
 
 	o.combine_scripts = function(){
-		scripts = dombuf.dom.xpath("//script[@src]");
-		urls = [];
-		for(var i = 0; i < scripts.length; i++){
+		var scripts = dombuf.dom.xpath("//script[@src]");
+		var scriptlen = scripts.length;
+		var urls = [];
+		for(var i = 0; i < scriptlen; i++){
 			urls.push(encodeURIComponent(scripts[i].getAttribute('src')));
 
-			if((i + 1) == scripts.length){
+			if((i + 1) == scriptlen){
 				// Replace the final script src with the new script src.
-				e8_src = "/_e8/combinejs/?" + urls.join(',');
+				var e8_src = "/_e8/combinejs/?" + urls.join(',');
 				scripts[i].setAttribute('src', e8_src);
 			}
 			else{
-				scripts[i].parentNode.removeChild(scripts[i]);
+				scripts[i].remove();
 			}
 		}
 	};
